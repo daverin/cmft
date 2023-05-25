@@ -2144,17 +2144,17 @@ namespace cmft
             // Multi thread (with or without OpenCL).
             else
             {
-                // Start CPU processing threads.
-                // while (activeCpuThreads < maxActiveCpuThreads - 1)
-                // {
-                //     cpuThreads[activeCpuThreads++] = std::thread(radianceFilterCpu, (void*)&taskList);
-                // }
-
                 // Start one GPU host thread.
-                // if (s_radianceProgram.isValid() && s_radianceProgram.isIdle())
-                // {
-                cpuThreads[activeCpuThreads++] = std::thread(radianceFilterGpu, (void*)&taskList);
-                // }
+                if (s_radianceProgram.isValid())
+                {
+                    cpuThreads[activeCpuThreads++] = std::thread(radianceFilterGpu, (void*)&taskList);
+                }
+
+                // Start CPU processing threads.
+                while (activeCpuThreads < maxActiveCpuThreads - 1)
+                {
+                    cpuThreads[activeCpuThreads++] = std::thread(radianceFilterCpu, (void*)&taskList);
+                }
 
                 // Wait for everything to finish.
                 for (uint32_t ii = 0; ii < activeCpuThreads; ++ii)
