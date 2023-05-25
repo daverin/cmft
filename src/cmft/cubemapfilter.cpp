@@ -1858,6 +1858,7 @@ namespace cmft
                            , uint32_t _dstFaceSize
                            , LightingModel::Enum _lightingModel
                            , bool _excludeBase
+                           , bool _useGPU
                            , uint8_t _mipCount
                            , uint8_t _glossScale
                            , uint8_t _glossBias
@@ -1978,6 +1979,7 @@ namespace cmft
              "\n\t[srcFaceSize=%u]"
              "\n\t[lightingModel=%s]"
              "\n\t[excludeBase=%s]"
+             "\n\t[useGPU=%s]"
              "\n\t[mipCount=%u]"
              "\n\t[glossScale=%u]"
              "\n\t[glossBias=%u]"
@@ -1985,6 +1987,7 @@ namespace cmft
              , imageRgba32f.m_width
              , getLightingModelStr(_lightingModel)
              , &"false\0true"[6*_excludeBase]
+             , &"false\0true"[6*_useGPU]
              , mipCount
              , _glossScale
              , _glossBias
@@ -2144,16 +2147,19 @@ namespace cmft
             // Multi thread (with or without OpenCL).
             else
             {
-                // // Start CPU processing threads.
-                // while (activeCpuThreads < maxActiveCpuThreads - 1)
-                // {
-                //     cpuThreads[activeCpuThreads++] = std::thread(radianceFilterCpu, (void*)&taskList);
-                // }
-
-                // Start one GPU host thread.
-                if (s_radianceProgram.isValid() && s_radianceProgram.isIdle())
+                if(_useGPU)
                 {
-                    cpuThreads[activeCpuThreads++] = std::thread(radianceFilterGpu, (void*)&taskList);
+                    if (s_radianceProgram.isValid() && s_radianceProgram.isIdle())
+                    {
+                        cpuThreads[activeCpuThreads++] = std::thread(radianceFilterGpu, (void*)&taskList);
+                    }
+                }
+                else
+                {
+                    while (activeCpuThreads < maxActiveCpuThreads - 1)
+                    {
+                        cpuThreads[activeCpuThreads++] = std::thread(radianceFilterCpu, (void*)&taskList);
+                    }
                 }
 
                 // Wait for everything to finish.
@@ -2252,6 +2258,7 @@ namespace cmft
                            , uint32_t _dstFaceSize
                            , LightingModel::Enum _lightingModel
                            , bool _excludeBase
+                           , bool _useGPU
                            , uint8_t _mipCount
                            , uint8_t _glossScale
                            , uint8_t _glossBias
@@ -2262,7 +2269,7 @@ namespace cmft
                            )
     {
         Image tmp;
-        if (imageRadianceFilter(tmp, _dstFaceSize, _lightingModel, _excludeBase, _mipCount, _glossScale, _glossBias, _image, _edgeFixup, _numCpuProcessingThreads, _clContext, _allocator))
+        if (imageRadianceFilter(tmp, _dstFaceSize, _lightingModel, _excludeBase, _useGPU, _mipCount, _glossScale, _glossBias, _image, _edgeFixup, _numCpuProcessingThreads, _clContext, _allocator))
         {
             imageMove(_image, tmp, _allocator);
             return true;
