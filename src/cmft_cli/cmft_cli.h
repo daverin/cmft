@@ -211,6 +211,7 @@ struct InputParameters
     uint32_t m_srcFaceSize;
     bool m_excludeBase;
     bool m_useGPU;
+    bool m_negativeGlossBias;
     uint32_t m_mipCount;
     uint32_t m_glossScale;
     uint32_t m_glossBias;
@@ -314,6 +315,7 @@ void inputParametersFromCommandLine(InputParameters& _inputParameters, const cmf
     _cmdLine.hasArg(_inputParameters.m_srcFaceSize, '\0', "srcFaceSize");
     _cmdLine.hasArg(_inputParameters.m_excludeBase, '\0', "excludeBase");
     _cmdLine.hasArg(_inputParameters.m_useGPU,      '\0', "useGPU");
+    _cmdLine.hasArg(_inputParameters.m_negativeGlossBias,      '\0', "negativeGlossBias");
     _cmdLine.hasArg(_inputParameters.m_mipCount,    '\0', "mipCount");
     _cmdLine.hasArg(_inputParameters.m_glossScale,  '\0', "glossScale");
     _cmdLine.hasArg(_inputParameters.m_glossBias,   '\0', "glossBias");
@@ -530,6 +532,7 @@ void inputParametersDefault(InputParameters& _inputParameters)
     _inputParameters.m_srcFaceSize   = 0;
     _inputParameters.m_excludeBase   = false;
     _inputParameters.m_useGPU        = false;
+    _inputParameters.m_negativeGlossBias = false;
     _inputParameters.m_mipCount      = 9;
     _inputParameters.m_glossScale    = 10;
     _inputParameters.m_glossBias     = 1;
@@ -1025,6 +1028,7 @@ int cmftMain(int _argc, char const* const* _argv)
                           , (LightingModel::Enum)inputParameters.m_lightingModel
                           , (bool)inputParameters.m_excludeBase
                           , (bool)inputParameters.m_useGPU
+                          , (bool) inputParameters.m_negativeGlossBias
                           , (uint8_t)inputParameters.m_mipCount
                           , (uint8_t)inputParameters.m_glossScale
                           , (uint8_t)inputParameters.m_glossBias

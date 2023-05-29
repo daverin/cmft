@@ -1859,6 +1859,7 @@ namespace cmft
                            , LightingModel::Enum _lightingModel
                            , bool _excludeBase
                            , bool _useGPU
+                           , bool _negativeGlossBias
                            , uint8_t _mipCount
                            , uint8_t _glossScale
                            , uint8_t _glossBias
@@ -2092,8 +2093,8 @@ namespace cmft
 
             const float mipCountf   = float(int32_t(mipCount));
             const float glossScalef = float(int32_t(_glossScale));
-            const float glossBiasf  = float(int32_t(_glossBias));
-
+            const float glossBiasf  = float(int32_t(_negativeGlossBias?_glossBias*-1:_glossBias));
+            
             //Prepare processing tasks parameters.
             for (uint32_t mip = mipStart; mip < mipCount; ++mip)
             {
@@ -2259,6 +2260,7 @@ namespace cmft
                            , LightingModel::Enum _lightingModel
                            , bool _excludeBase
                            , bool _useGPU
+                           , bool _negativeGlossBias
                            , uint8_t _mipCount
                            , uint8_t _glossScale
                            , uint8_t _glossBias
@@ -2269,7 +2271,7 @@ namespace cmft
                            )
     {
         Image tmp;
-        if (imageRadianceFilter(tmp, _dstFaceSize, _lightingModel, _excludeBase, _useGPU, _mipCount, _glossScale, _glossBias, _image, _edgeFixup, _numCpuProcessingThreads, _clContext, _allocator))
+        if (imageRadianceFilter(tmp, _dstFaceSize, _lightingModel, _excludeBase, _useGPU, _negativeGlossBias, _mipCount, _glossScale, _glossBias, _image, _edgeFixup, _numCpuProcessingThreads, _clContext, _allocator))
         {
             imageMove(_image, tmp, _allocator);
             return true;

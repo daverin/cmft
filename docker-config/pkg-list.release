@@ -1,0 +1,8 @@
+libgl1
+apt-utils
+opencl-headers
+unzip
+xz-utils
+ocl-icd-libopencl1
+opencl-headers
+clinfo

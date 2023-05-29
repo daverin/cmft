@@ -78,6 +78,7 @@ namespace cmft
                            , LightingModel::Enum _lightingModel
                            , bool _excludeBase
                            , bool _useGPU
+                           , bool _negativeGlossBias
                            , uint8_t _mipCount
                            , uint8_t _glossScale
                            , uint8_t _glossBias
@@ -94,6 +95,7 @@ namespace cmft
                            , LightingModel::Enum _lightingModel
                            , bool _excludeBase
                            , bool _useGPU
+                           , bool _negativeGlossBias
                            , uint8_t _mipCount
                            , uint8_t _glossScale
                            , uint8_t _glossBias
